@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "ytongame-hostingmenu",
+  "version": "${version}",
+  "name": "YTGame-HostingMenu",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/ytongame-hostingmenu/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "fabric-datagen": [
+      "moe.ytonidc.ytongame_hostingmenu.client.Ytongame_hostingmenuDataGenerator"
+    ],
+    "client": [
+      "moe.ytonidc.ytongame_hostingmenu.client.Ytongame_hostingmenuClient"
+    ],
+    "main": [
+      "moe.ytonidc.ytongame_hostingmenu.Ytongame_hostingmenu"
+    ]
+  },
+  "mixins": [
+    "ytongame-hostingmenu.mixins.json",
+    {
+      "config": "ytongame-hostingmenu.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric-api": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
