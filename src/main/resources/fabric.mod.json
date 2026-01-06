@@ -10,9 +10,6 @@
   "icon": "assets/ytongame-hostingmenu/icon.png",
   "environment": "client",
   "entrypoints": {
-    "fabric-datagen": [
-      "moe.ytonidc.ytongame_hostingmenu.client.Ytongame_hostingmenuDataGenerator"
-    ],
     "client": [
       "moe.ytonidc.ytongame_hostingmenu.client.Ytongame_hostingmenuClient"
     ],
@@ -21,15 +18,12 @@
     ]
   },
   "mixins": [
-    "ytongame-hostingmenu.mixins.json",
-    {
-      "config": "ytongame-hostingmenu.client.mixins.json",
-      "environment": "client"
-    }
+    "ytongame-hostingmenu.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=${loader_version}",
-    "fabric-api": "*",
-    "minecraft": "${minecraft_version}"
+    "fabricloader": ">=0.16.0",
+    "fabric": "*",
+    "minecraft": "~1.16.5",
+    "java": ">=8"
   }
 }

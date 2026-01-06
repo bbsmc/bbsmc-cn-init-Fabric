@@ -23,7 +23,7 @@ public class Config {
     public static void load() {
         if (Files.exists(CONFIG_PATH)) {
             try {
-                String json = Files.readString(CONFIG_PATH);
+                String json = new String(Files.readAllBytes(CONFIG_PATH));
                 data = GSON.fromJson(json, ConfigData.class);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -35,7 +35,7 @@ public class Config {
 
     public static void save() {
         try {
-            Files.writeString(CONFIG_PATH, GSON.toJson(data));
+            Files.write(CONFIG_PATH, GSON.toJson(data).getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }

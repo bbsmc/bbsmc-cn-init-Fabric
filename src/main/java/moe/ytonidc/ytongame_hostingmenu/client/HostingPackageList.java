@@ -1,13 +1,14 @@
 package moe.ytonidc.ytongame_hostingmenu.client;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
+import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
-public class HostingPackageList extends AlwaysSelectedEntryListWidget<HostingPackageList.Entry> {
+public class HostingPackageList extends EntryListWidget<HostingPackageList.Entry> {
 
     public HostingPackageList(MinecraftClient minecraft, int width, int height, int top, int bottom, int itemHeight) {
         super(minecraft, width, height, top, bottom, itemHeight);
@@ -27,7 +28,7 @@ public class HostingPackageList extends AlwaysSelectedEntryListWidget<HostingPac
         return this.width - 6;
     }
 
-    public class Entry extends AlwaysSelectedEntryListWidget.Entry<Entry> {
+    public class Entry extends EntryListWidget.Entry<Entry> {
         private final HostingPackage pkg;
 
         public Entry(HostingPackage pkg) {
@@ -37,7 +38,7 @@ public class HostingPackageList extends AlwaysSelectedEntryListWidget<HostingPac
         @Override
         public void render(MatrixStack matrices, int index, int top, int left, int width, int height,
                           int mouseX, int mouseY, boolean hovering, float partialTick) {
-            var font = client.textRenderer;
+            TextRenderer font = client.textRenderer;
 
             if (hovering) {
                 DrawableHelper.fill(matrices, left - 2, top - 2, left + width + 2, top + height + 2, 0x80808080);
@@ -87,7 +88,6 @@ public class HostingPackageList extends AlwaysSelectedEntryListWidget<HostingPac
             font.draw(matrices, playersText, textLeft + 250, line3Y, 0xFFAAAAAA);
         }
 
-        @Override
         public Text getNarration() {
             return new LiteralText(pkg.getName() + " - ¥" + pkg.getPrice() + "/月");
         }

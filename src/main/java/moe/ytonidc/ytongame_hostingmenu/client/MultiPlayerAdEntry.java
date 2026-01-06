@@ -7,7 +7,6 @@ import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
-import org.jetbrains.annotations.NotNull;
 
 public class MultiPlayerAdEntry extends MultiplayerServerListWidget.Entry {
     private final MinecraftClient minecraft;
@@ -16,15 +15,14 @@ public class MultiPlayerAdEntry extends MultiplayerServerListWidget.Entry {
         this.minecraft = minecraft;
     }
 
-    @Override
-    public @NotNull Text getNarration() {
+    public Text getNarration() {
         return new LiteralText("YtonGame AdEntry");
     }
 
     @Override
     public void render(MatrixStack matrices, int index, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float partialTicks) {
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShaderTexture(0, Ytongame_hostingmenuClient.HOSTING_LOGO);
+        RenderSystem.color4f(1.0f, 1.0f, 1.0f, 1.0f);
+        this.minecraft.getTextureManager().bindTexture(Ytongame_hostingmenuClient.HOSTING_LOGO);
         DrawableHelper.drawTexture(matrices, left, top, 0, 0.0f, 0.0f, entryHeight, entryHeight, entryHeight, entryHeight);
         this.minecraft.textRenderer.draw(matrices, "如果您需要24H不间断的服务器? 点击我跳转详情!", left + 32 + 3, top + 1, 16777215);
 
@@ -95,7 +93,7 @@ public class MultiPlayerAdEntry extends MultiplayerServerListWidget.Entry {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
-            this.minecraft.setScreen(new HostingScreen(this.minecraft.currentScreen));
+            this.minecraft.openScreen(new HostingScreen(this.minecraft.currentScreen));
             return true;
         }
         return false;

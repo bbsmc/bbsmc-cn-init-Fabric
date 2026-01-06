@@ -1,4 +1,4 @@
-package moe.ytonidc.ytongame_hostingmenu.mixin.client;
+package moe.ytonidc.ytongame_hostingmenu.mixin;
 
 import moe.ytonidc.ytongame_hostingmenu.client.HostingScreen;
 import moe.ytonidc.ytongame_hostingmenu.client.RegionDetector;
@@ -37,9 +37,9 @@ public abstract class SelectWorldScreenMixin extends Screen {
 
             ButtonWidget hostingButton = new ButtonWidget(buttonX, buttonY, buttonWidth, buttonHeight,
                 new LiteralText("联机开服"),
-                button -> this.client.setScreen(new HostingScreen(this)));
+                button -> this.client.openScreen(new HostingScreen(this)));
 
-            this.addDrawableChild(hostingButton);
+            this.addButton(hostingButton);
         }
     }
 }
