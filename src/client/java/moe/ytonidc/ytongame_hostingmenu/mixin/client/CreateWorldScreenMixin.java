@@ -5,6 +5,7 @@ import moe.ytonidc.ytongame_hostingmenu.client.RegionDetector;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -34,7 +35,7 @@ public abstract class CreateWorldScreenMixin extends Screen {
         int buttonY = 8;
 
         ytongame$hostingButton = new ButtonWidget(buttonX, buttonY, buttonWidth, buttonHeight,
-            Text.literal("联机开服"),
+            new LiteralText("联机开服"),
             button -> this.client.setScreen(new HostingScreen(this)));
 
         this.addDrawableChild(ytongame$hostingButton);

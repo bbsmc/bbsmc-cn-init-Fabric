@@ -5,6 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +18,7 @@ public class MultiPlayerAdEntry extends MultiplayerServerListWidget.Entry {
 
     @Override
     public @NotNull Text getNarration() {
-        return Text.literal("YtonGame AdEntry");
+        return new LiteralText("YtonGame AdEntry");
     }
 
     @Override

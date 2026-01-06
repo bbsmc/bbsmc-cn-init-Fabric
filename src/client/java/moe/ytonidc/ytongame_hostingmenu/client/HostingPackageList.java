@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 public class HostingPackageList extends AlwaysSelectedEntryListWidget<HostingPackageList.Entry> {
@@ -88,7 +89,7 @@ public class HostingPackageList extends AlwaysSelectedEntryListWidget<HostingPac
 
         @Override
         public Text getNarration() {
-            return Text.literal(pkg.getName() + " - ¥" + pkg.getPrice() + "/月");
+            return new LiteralText(pkg.getName() + " - ¥" + pkg.getPrice() + "/月");
         }
 
         public HostingPackage getPackage() {
