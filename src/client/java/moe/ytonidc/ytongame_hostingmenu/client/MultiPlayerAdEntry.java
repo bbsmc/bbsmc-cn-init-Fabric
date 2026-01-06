@@ -2,9 +2,9 @@ package moe.ytonidc.ytongame_hostingmenu.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
-import net.minecraft.client.gui.screen.world.CreateWorldScreen;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,20 +21,21 @@ public class MultiPlayerAdEntry extends MultiplayerServerListWidget.Entry {
     }
 
     @Override
-    public void render(DrawContext context, int index, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float partialTicks) {
+    public void render(MatrixStack matrices, int index, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float partialTicks) {
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        context.drawTexture(Ytongame_hostingmenuClient.HOSTING_LOGO, left, top, 0, 0.0f, 0.0f, entryHeight, entryHeight, entryHeight, entryHeight);
-        context.drawText(this.minecraft.textRenderer, "如果您需要24H不间断的服务器? 点击我跳转详情!", left + 32 + 3, top + 1, 16777215, false);
+        RenderSystem.setShaderTexture(0, Ytongame_hostingmenuClient.HOSTING_LOGO);
+        DrawableHelper.drawTexture(matrices, left, top, 0, 0.0f, 0.0f, entryHeight, entryHeight, entryHeight, entryHeight);
+        this.minecraft.textRenderer.draw(matrices, "如果您需要24H不间断的服务器? 点击我跳转详情!", left + 32 + 3, top + 1, 16777215);
 
         String line1 = "推荐选用昱通游戏，我们收录且支持数百种整合包一键联机（仍在更新）";
         String line2 = "致力为您提供稳定、流畅的服务器，打造优、稳、快的游戏体验";
         int textStartX = left + 32 + 3;
 
-        renderGradientText(context, line1, textStartX, top + 12, true);
-        renderGradientText(context, line2, textStartX, top + 12 + 9, false);
+        renderGradientText(matrices, line1, textStartX, top + 12, true);
+        renderGradientText(matrices, line2, textStartX, top + 12 + 9, false);
     }
 
-    private void renderGradientText(DrawContext context, String text, int startX, int y, boolean useGreen) {
+    private void renderGradientText(MatrixStack matrices, String text, int startX, int y, boolean useGreen) {
         int charX = startX;
         int textLength = text.length();
 
@@ -43,7 +44,7 @@ public class MultiPlayerAdEntry extends MultiplayerServerListWidget.Entry {
             float progress = (float) i / (textLength - 1);
             int color = useGreen ? getGreenGradientColor(progress) : getYellowOrangeGradientColor(progress);
 
-            context.drawText(this.minecraft.textRenderer, ch, charX, y, color, false);
+            this.minecraft.textRenderer.draw(matrices, ch, charX, y, color);
             charX += this.minecraft.textRenderer.getWidth(ch);
         }
     }
@@ -93,8 +94,7 @@ public class MultiPlayerAdEntry extends MultiplayerServerListWidget.Entry {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button == 0) {
-            HostingTab.shouldOpenHostingTab = true;
-            CreateWorldScreen.create(this.minecraft, this.minecraft.currentScreen);
+            this.minecraft.setScreen(new HostingScreen(this.minecraft.currentScreen));
             return true;
         }
         return false;

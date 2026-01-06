@@ -7,6 +7,5 @@ public class Ytongame_hostingmenuDataGenerator implements DataGeneratorEntrypoin
 
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
-        FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
     }
 }

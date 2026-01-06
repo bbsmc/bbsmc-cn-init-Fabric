@@ -6,10 +6,7 @@
   "client": [
     "CreateWorldScreenMixin",
     "SelectWorldScreenMixin",
-    "MultiplayerServerListWidgetMixin",
-    "TabButtonWidgetMixin",
-    "TabNavigationWidgetBuilderMixin",
-    "accessor.TabNavigationWidgetAccessor"
+    "MultiplayerServerListWidgetMixin"
   ],
   "injectors": {
     "defaultRequire": 1

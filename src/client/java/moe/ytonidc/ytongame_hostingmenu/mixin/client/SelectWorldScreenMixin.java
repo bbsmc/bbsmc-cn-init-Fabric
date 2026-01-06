@@ -1,9 +1,8 @@
 package moe.ytonidc.ytongame_hostingmenu.mixin.client;
 
-import moe.ytonidc.ytongame_hostingmenu.client.HostingTab;
+import moe.ytonidc.ytongame_hostingmenu.client.HostingScreen;
 import moe.ytonidc.ytongame_hostingmenu.client.RegionDetector;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.world.CreateWorldScreen;
 import net.minecraft.client.gui.screen.world.SelectWorldScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -31,14 +30,13 @@ public abstract class SelectWorldScreenMixin extends Screen {
 
         if (searchBox != null) {
             int buttonWidth = 60;
-            int buttonX = searchBox.getX() + searchBox.getWidth() + 4;
-            int buttonY = searchBox.getY();
+            int buttonX = searchBox.x + searchBox.getWidth() + 4;
+            int buttonY = searchBox.y;
             int buttonHeight = searchBox.getHeight();
 
-            ButtonWidget hostingButton = ButtonWidget.builder(Text.literal("联机开服"), button -> {
-                HostingTab.shouldOpenHostingTab = true;
-                CreateWorldScreen.create(this.client, this);
-            }).dimensions(buttonX, buttonY, buttonWidth, buttonHeight).build();
+            ButtonWidget hostingButton = new ButtonWidget(buttonX, buttonY, buttonWidth, buttonHeight,
+                Text.literal("联机开服"),
+                button -> this.client.setScreen(new HostingScreen(this)));
 
             this.addDrawableChild(hostingButton);
         }
