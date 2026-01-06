@@ -32,7 +32,7 @@ public abstract class TabButtonWidgetMixin extends ClickableWidget {
         }
     }
 
-    @Inject(method = "renderButton", at = @At("TAIL"))
+    @Inject(method = "renderWidget", at = @At("TAIL"))
     private void onRenderWidget(DrawContext context, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         Tab currentTab = tabManager.getCurrentTab();
         if (this.tab instanceof HostingTab && currentTab instanceof HostingTab) {

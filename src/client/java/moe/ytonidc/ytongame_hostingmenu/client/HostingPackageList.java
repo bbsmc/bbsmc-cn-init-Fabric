@@ -7,8 +7,8 @@ import net.minecraft.text.Text;
 
 public class HostingPackageList extends AlwaysSelectedEntryListWidget<HostingPackageList.Entry> {
 
-    public HostingPackageList(MinecraftClient minecraft, int width, int height, int top, int bottom, int itemHeight) {
-        super(minecraft, width, height, top, bottom, itemHeight);
+    public HostingPackageList(MinecraftClient minecraft, int width, int height, int top, int itemHeight) {
+        super(minecraft, width, height, top, itemHeight);
 
         for (HostingPackage pkg : HostingPackage.getAllPackages()) {
             this.addEntry(new Entry(pkg));
@@ -18,11 +18,6 @@ public class HostingPackageList extends AlwaysSelectedEntryListWidget<HostingPac
     @Override
     public int getRowWidth() {
         return this.width - 40;
-    }
-
-    @Override
-    protected int getScrollbarPositionX() {
-        return this.width - 6;
     }
 
     public class Entry extends AlwaysSelectedEntryListWidget.Entry<Entry> {

@@ -12,8 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MultiplayerServerListWidget.class)
 public abstract class MultiplayerServerListWidgetMixin extends AlwaysSelectedEntryListWidget<MultiplayerServerListWidget.Entry> {
-    public MultiplayerServerListWidgetMixin(MinecraftClient minecraftClient, int width, int height, int top, int bottom, int itemHeight) {
-        super(minecraftClient, width, height, top, bottom, itemHeight);
+    public MultiplayerServerListWidgetMixin(MinecraftClient minecraftClient, int width, int height, int y, int itemHeight) {
+        super(minecraftClient, width, height, y, itemHeight);
     }
 
     @Inject(

@@ -101,15 +101,15 @@ public abstract class CreateWorldScreenMixin extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         Tab currentTab = tabManager.getCurrentTab();
         if (currentTab instanceof HostingTab hostingTab) {
             var list = hostingTab.getPackageList();
-            if (list != null && list.mouseScrolled(mouseX, mouseY, amount)) {
+            if (list != null && list.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)) {
                 return true;
             }
         }
-        return super.mouseScrolled(mouseX, mouseY, amount);
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
     }
 
     @Override

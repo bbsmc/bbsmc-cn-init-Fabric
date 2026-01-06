@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 public class Ytongame_hostingmenuClient implements ClientModInitializer {
     public static final String MODID = "ytongame-hostingmenu";
-    public static final Identifier HOSTING_LOGO = new Identifier(MODID, "textures/gui/logo_ytongame.png");
+    public static final Identifier HOSTING_LOGO = Identifier.of(MODID, "textures/gui/logo_ytongame.png");
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
     @Override

@@ -29,10 +29,6 @@ public class HostingTab implements Tab {
     }
 
     @Override
-    public void tick() {
-    }
-
-    @Override
     public void forEachChild(Consumer<ClickableWidget> consumer) {
     }
 
@@ -42,9 +38,8 @@ public class HostingTab implements Tab {
 
         MinecraftClient minecraft = MinecraftClient.getInstance();
         int listTop = rectangle.getTop();
-        int listBottom = rectangle.getTop() + rectangle.height() - 25;
 
-        this.packageList = new HostingPackageList(minecraft, rectangle.width(), rectangle.height() - 25, listTop, listBottom, 52);
+        this.packageList = new HostingPackageList(minecraft, rectangle.width(), rectangle.height() - 25, listTop, 52);
     }
 
     public void render(DrawContext context, int mouseX, int mouseY, float partialTick) {
@@ -55,7 +50,7 @@ public class HostingTab implements Tab {
         if (tabArea != null) {
             var font = MinecraftClient.getInstance().textRenderer;
             String footerText = "* 致力为您提供稳定、流畅、24小时不断联的服务器，打造更优、更稳、更好的游戏体验！无人值守也可玩！";
-            int footerY = tabArea.getTop() + tabArea.height() - 21;
+            int footerY = tabArea.getTop() + tabArea.height() - 16;
 
             int textWidth = font.getWidth(footerText);
             int startX = tabArea.getLeft() + (tabArea.width() - textWidth) / 2;
