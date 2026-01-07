@@ -15,7 +15,7 @@ public class Config {
     private static ConfigData data = new ConfigData();
 
     public static class ConfigData {
-        public String purchaseUrl = "https://example.com/buy";
+        public String purchaseUrl = "https://bbsmc.net/server?aff=LaotouY";
         public boolean enableAds = true;
         public boolean chineseOnly = true;
     }
