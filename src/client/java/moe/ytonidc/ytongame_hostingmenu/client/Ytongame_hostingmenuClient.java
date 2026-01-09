@@ -33,8 +33,6 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
     }
 
     private void onClientStarted(MinecraftClient mc) {
-        ResourcePackManager packRepository = mc.getResourcePackManager();
-
         File configFile = new File(mc.runDirectory, "config/modpack_info.json");
         if (!configFile.exists()) {
             LOGGER.debug("modpack_info.json not found, skipping auto resource pack loading");
@@ -84,22 +82,25 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
             return;
         }
 
-        packRepository.scanPacks();
+        mc.execute(() -> {
+            ResourcePackManager packRepository = mc.getResourcePackManager();
+            packRepository.scanPacks();
 
-        Collection<String> selected = new ArrayList<>(packRepository.getEnabledNames());
-        boolean changed = false;
-        for (String packId : packsToEnable) {
-            ResourcePackProfile pack = packRepository.getProfile(packId);
-            if (pack != null && !selected.contains(packId)) {
-                selected.add(packId);
-                changed = true;
-                LOGGER.info("Auto-enabled resource pack: {}", packId);
+            Collection<String> selected = new ArrayList<>(packRepository.getEnabledNames());
+            boolean changed = false;
+            for (String packId : packsToEnable) {
+                ResourcePackProfile pack = packRepository.getProfile(packId);
+                if (pack != null && !selected.contains(packId)) {
+                    selected.add(packId);
+                    changed = true;
+                    LOGGER.info("Auto-enabled resource pack: {}", packId);
+                }
             }
-        }
 
-        if (changed) {
-            packRepository.setEnabledProfiles(selected);
-            mc.reloadResources();
-        }
+            if (changed) {
+                packRepository.setEnabledProfiles(selected);
+                mc.reloadResources();
+            }
+        });
     }
 }
