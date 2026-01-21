@@ -37,8 +37,16 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
     private void onClientStarted(MinecraftClient mc) {
         File configFile = new File(mc.runDirectory, "config/modpack_info.json");
         if (!configFile.exists()) {
-            LOGGER.debug("modpack_info.json not found, skipping auto resource pack loading");
+            LOGGER.debug("modpack_info.json not found, skipping auto setup");
             return;
+        }
+
+        // 检查并设置语言为简体中文
+        String currentLang = mc.getLanguageManager().getLanguage();
+        if (!"zh_cn".equals(currentLang)) {
+            LOGGER.info("Current language is '{}', switching to zh_cn", currentLang);
+            mc.getLanguageManager().setLanguage("zh_cn");
+            mc.reloadResources();
         }
 
         List<String> languagePacks = new ArrayList<>();
