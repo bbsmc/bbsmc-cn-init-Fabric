@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.resource.language.LanguageDefinition;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourcePackProfile;
 import net.minecraft.util.Identifier;
@@ -37,8 +38,19 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
     private void onClientStarted(MinecraftClient mc) {
         File configFile = new File(mc.runDirectory, "config/modpack_info.json");
         if (!configFile.exists()) {
-            LOGGER.debug("modpack_info.json not found, skipping auto resource pack loading");
+            LOGGER.debug("modpack_info.json not found, skipping auto setup");
             return;
+        }
+
+        // 检查并设置语言为简体中文
+        String currentLang = mc.getLanguageManager().getLanguage().getCode();
+        if (!"zh_cn".equals(currentLang)) {
+            LOGGER.info("Current language is '{}', switching to zh_cn", currentLang);
+            LanguageDefinition zhCn = mc.getLanguageManager().getLanguage("zh_cn");
+            if (zhCn != null) {
+                mc.getLanguageManager().setLanguage(zhCn);
+                mc.reloadResources();
+            }
         }
 
         List<String> languagePacks = new ArrayList<>();
