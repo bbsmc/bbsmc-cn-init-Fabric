@@ -49,6 +49,7 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
             LanguageDefinition zhCn = mc.getLanguageManager().getLanguage("zh_cn");
             if (zhCn != null) {
                 mc.getLanguageManager().setLanguage(zhCn);
+                RegionDetector.refreshLanguage("zh_cn");
                 mc.reloadResources();
             }
         }
