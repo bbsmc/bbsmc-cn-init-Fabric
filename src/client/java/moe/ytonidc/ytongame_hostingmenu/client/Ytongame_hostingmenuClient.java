@@ -46,6 +46,7 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
         if (!"zh_cn".equals(currentLang)) {
             LOGGER.info("Current language is '{}', switching to zh_cn", currentLang);
             mc.getLanguageManager().setLanguage("zh_cn");
+            RegionDetector.refreshLanguage("zh_cn");
             mc.reloadResources();
         }
 
