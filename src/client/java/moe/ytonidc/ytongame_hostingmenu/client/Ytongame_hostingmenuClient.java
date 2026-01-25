@@ -43,10 +43,14 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
 
         // 检查并设置语言为简体中文
         String currentLang = mc.getLanguageManager().getLanguage();
-        if (!"zh_cn".equals(currentLang)) {
+        String targetLang = "zh_cn";
+        if (!targetLang.equals(currentLang)) {
             LOGGER.info("Current language is '{}', switching to zh_cn", currentLang);
-            mc.getLanguageManager().setLanguage("zh_cn");
-            RegionDetector.refreshLanguage("zh_cn");
+            mc.getLanguageManager().setLanguage(targetLang);
+            mc.options.language = targetLang;
+            mc.options.write();
+            LOGGER.info("Saving language '{}' to options", targetLang);
+            RegionDetector.refreshLanguage(targetLang);
             mc.reloadResources();
         }
 
