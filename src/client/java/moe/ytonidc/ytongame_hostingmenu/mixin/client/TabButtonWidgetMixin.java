@@ -36,7 +36,7 @@ public abstract class TabButtonWidgetMixin extends ClickableWidget {
     private void onRenderWidget(DrawContext context, int mouseX, int mouseY, float partialTick, CallbackInfo ci) {
         Tab currentTab = tabManager.getCurrentTab();
         if (this.tab instanceof HostingTab && currentTab instanceof HostingTab) {
-            context.drawBorder(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0xFFFFFFFF);
+            context.drawStrokedRectangle(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0xFFFFFFFF);
         }
     }
 }

@@ -3,6 +3,7 @@ package moe.ytonidc.ytongame_hostingmenu.mixin.client;
 import moe.ytonidc.ytongame_hostingmenu.client.Config;
 import moe.ytonidc.ytongame_hostingmenu.client.HostingTab;
 import moe.ytonidc.ytongame_hostingmenu.mixin.client.accessor.TabNavigationWidgetAccessor;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
@@ -113,7 +114,16 @@ public abstract class CreateWorldScreenMixin extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(Click click, boolean doubled) {
+        // 先让父类处理点击事件（包括取消按钮等原生控件）
+        boolean handled = super.mouseClicked(click, doubled);
+        if (handled) {
+            return true;
+        }
+
+        double mouseX = click.x();
+        double mouseY = click.y();
+        int button = click.button();
         Tab currentTab = tabManager.getCurrentTab();
         if (currentTab instanceof HostingTab hostingTab) {
             ButtonWidget createButton = ytongame$findCreateButton();
@@ -126,11 +136,11 @@ public abstract class CreateWorldScreenMixin extends Screen {
             }
 
             var list = hostingTab.getPackageList();
-            if (list != null && list.mouseClicked(mouseX, mouseY, button)) {
+            if (list != null && list.mouseClicked(click, doubled)) {
                 return true;
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return false;
     }
 
     @Unique
@@ -143,26 +153,38 @@ public abstract class CreateWorldScreenMixin extends Screen {
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(Click click) {
+        // 先让父类处理
+        boolean handled = super.mouseReleased(click);
+        if (handled) {
+            return true;
+        }
+
         Tab currentTab = tabManager.getCurrentTab();
         if (currentTab instanceof HostingTab hostingTab) {
             var list = hostingTab.getPackageList();
-            if (list != null && list.mouseReleased(mouseX, mouseY, button)) {
+            if (list != null && list.mouseReleased(click)) {
                 return true;
             }
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return false;
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean mouseDragged(Click click, double deltaX, double deltaY) {
+        // 先让父类处理
+        boolean handled = super.mouseDragged(click, deltaX, deltaY);
+        if (handled) {
+            return true;
+        }
+
         Tab currentTab = tabManager.getCurrentTab();
         if (currentTab instanceof HostingTab hostingTab) {
             var list = hostingTab.getPackageList();
-            if (list != null && list.mouseDragged(mouseX, mouseY, button, deltaX, deltaY)) {
+            if (list != null && list.mouseDragged(click, deltaX, deltaY)) {
                 return true;
             }
         }
-        return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+        return false;
     }
 }

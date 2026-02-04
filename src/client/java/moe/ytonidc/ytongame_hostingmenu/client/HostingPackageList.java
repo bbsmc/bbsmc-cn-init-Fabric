@@ -28,9 +28,12 @@ public class HostingPackageList extends AlwaysSelectedEntryListWidget<HostingPac
         }
 
         @Override
-        public void render(DrawContext context, int index, int top, int left, int width, int height,
-                          int mouseX, int mouseY, boolean hovering, float partialTick) {
+        public void render(DrawContext context, int mouseX, int mouseY, boolean hovering, float partialTick) {
             var font = client.textRenderer;
+            int left = this.getX();
+            int top = this.getY();
+            int width = this.getWidth();
+            int height = this.getHeight();
 
             if (hovering) {
                 context.fill(left - 2, top - 2, left + width + 2, top + height + 2, 0x80808080);

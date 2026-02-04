@@ -1,10 +1,12 @@
 package moe.ytonidc.ytongame_hostingmenu.client;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerServerListWidget;
 import net.minecraft.client.gui.screen.world.CreateWorldScreen;
+import net.minecraft.client.gui.widget.EntryListWidget;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,9 +23,25 @@ public class MultiPlayerAdEntry extends MultiplayerServerListWidget.Entry {
     }
 
     @Override
-    public void render(DrawContext context, int index, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float partialTicks) {
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        context.drawTexture(Ytongame_hostingmenuClient.HOSTING_LOGO, left, top, 0, 0.0f, 0.0f, entryHeight, entryHeight, entryHeight, entryHeight);
+    public void connect() {
+        HostingTab.shouldOpenHostingTab = true;
+        // 保存当前屏幕，以便取消时返回
+        var currentScreen = this.minecraft.currentScreen;
+        CreateWorldScreen.show(this.minecraft, () -> this.minecraft.setScreen(currentScreen));
+    }
+
+    @Override
+    public boolean isOfSameType(MultiplayerServerListWidget.Entry entry) {
+        return entry instanceof MultiPlayerAdEntry;
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+        int left = this.getX();
+        int top = this.getY();
+        int entryHeight = this.getHeight();
+
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, Ytongame_hostingmenuClient.HOSTING_LOGO, left, top, 0.0f, 0.0f, entryHeight, entryHeight, entryHeight, entryHeight);
         context.drawText(this.minecraft.textRenderer, "如果您需要24H不间断的服务器? 点击我跳转详情!", left + 32 + 3, top + 1, 16777215, false);
 
         String line1 = "推荐选用昱通游戏，我们收录且支持数百种整合包一键联机（仍在更新）";
@@ -91,10 +109,9 @@ public class MultiPlayerAdEntry extends MultiplayerServerListWidget.Entry {
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (button == 0) {
-            HostingTab.shouldOpenHostingTab = true;
-            CreateWorldScreen.create(this.minecraft, this.minecraft.currentScreen);
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (click.button() == 0) {
+            connect();
             return true;
         }
         return false;

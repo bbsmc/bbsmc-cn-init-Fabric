@@ -37,7 +37,7 @@ public abstract class SelectWorldScreenMixin extends Screen {
 
             ButtonWidget hostingButton = ButtonWidget.builder(Text.literal("联机开服"), button -> {
                 HostingTab.shouldOpenHostingTab = true;
-                CreateWorldScreen.create(this.client, this);
+                CreateWorldScreen.show(this.client, () -> this.client.setScreen(this));
             }).dimensions(buttonX, buttonY, buttonWidth, buttonHeight).build();
 
             this.addDrawableChild(hostingButton);

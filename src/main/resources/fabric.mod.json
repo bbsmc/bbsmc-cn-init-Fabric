@@ -9,6 +9,7 @@
   "license": "All-Rights-Reserved",
   "icon": "assets/ytongame-hostingmenu/icon.png",
   "environment": "client",
+  "accessWidener": "ytongame-hostingmenu.accesswidener",
   "entrypoints": {
     "fabric-datagen": [
       "moe.ytonidc.ytongame_hostingmenu.client.Ytongame_hostingmenuDataGenerator"

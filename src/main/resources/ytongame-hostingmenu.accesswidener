@@ -1,0 +1,5 @@
+accessWidener v2 named
+
+# Make isOfSameType method accessible
+accessible method net/minecraft/client/gui/screen/multiplayer/MultiplayerServerListWidget$Entry isOfSameType (Lnet/minecraft/client/gui/screen/multiplayer/MultiplayerServerListWidget$Entry;)Z
+extendable method net/minecraft/client/gui/screen/multiplayer/MultiplayerServerListWidget$Entry isOfSameType (Lnet/minecraft/client/gui/screen/multiplayer/MultiplayerServerListWidget$Entry;)Z

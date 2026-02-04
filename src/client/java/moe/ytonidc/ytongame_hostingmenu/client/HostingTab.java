@@ -29,6 +29,11 @@ public class HostingTab implements Tab {
     }
 
     @Override
+    public Text getNarratedHint() {
+        return TITLE;
+    }
+
+    @Override
     public void forEachChild(Consumer<ClickableWidget> consumer) {
     }
 

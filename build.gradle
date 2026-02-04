@@ -13,6 +13,8 @@ base {
 loom {
     splitEnvironmentSourceSets()
 
+    accessWidenerPath = file("src/main/resources/ytongame-hostingmenu.accesswidener")
+
     mods {
         "ytongame-hostingmenu" {
             sourceSet sourceSets.main
