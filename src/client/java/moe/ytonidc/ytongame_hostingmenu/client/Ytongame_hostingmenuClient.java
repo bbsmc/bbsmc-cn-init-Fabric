@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.LanguageDefinition;
 import net.minecraft.resource.ResourcePackManager;
@@ -27,18 +28,32 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static final Gson GSON = new Gson();
 
+    private static boolean languageSetupDone = false;
+
     @Override
     public void onInitializeClient() {
         Config.load();
         HostingPackage.loadAsync();
 
         ClientLifecycleEvents.CLIENT_STARTED.register(this::onClientStarted);
+        ClientTickEvents.END_CLIENT_TICK.register(this::onClientTick);
     }
 
-    private void onClientStarted(MinecraftClient mc) {
+    // 客户端tick事件 - 在游戏完全加载后设置语言
+    private void onClientTick(MinecraftClient mc) {
+        if (languageSetupDone) {
+            return;
+        }
+
+        // 等待游戏完全加载（主菜单出现）
+        if (mc.currentScreen == null && mc.world == null) {
+            return;
+        }
+
+        languageSetupDone = true;
+
         File configFile = new File(mc.runDirectory, "config/modpack_info.json");
         if (!configFile.exists()) {
-            LOGGER.debug("modpack_info.json not found, skipping auto setup");
             return;
         }
 
@@ -52,10 +67,18 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
                 mc.getLanguageManager().setLanguage(zhCn);
                 mc.options.language = targetLang;
                 mc.options.write();
-                LOGGER.info("Saving language '{}' to options", targetLang);
+                LOGGER.info("Language set to '{}', reloading resources", targetLang);
                 RegionDetector.refreshLanguage(targetLang);
                 mc.reloadResources();
             }
+        }
+    }
+
+    private void onClientStarted(MinecraftClient mc) {
+        File configFile = new File(mc.runDirectory, "config/modpack_info.json");
+        if (!configFile.exists()) {
+            LOGGER.debug("modpack_info.json not found, skipping auto setup");
+            return;
         }
 
         List<String> languagePacks = new ArrayList<>();
