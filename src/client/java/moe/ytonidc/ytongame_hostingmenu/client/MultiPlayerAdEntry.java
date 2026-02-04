@@ -42,11 +42,11 @@ public class MultiPlayerAdEntry extends MultiplayerServerListWidget.Entry {
         int entryHeight = this.getHeight();
 
         context.drawTexture(RenderPipelines.GUI_TEXTURED, Ytongame_hostingmenuClient.HOSTING_LOGO, left, top, 0.0f, 0.0f, entryHeight, entryHeight, entryHeight, entryHeight);
-        context.drawText(this.minecraft.textRenderer, "如果您需要24H不间断的服务器? 点击我跳转详情!", left + 32 + 3, top + 1, 16777215, false);
+        context.drawText(this.minecraft.textRenderer, "如果您需要24H不间断的服务器? 点击我跳转详情!", left + 32 + 5, top + 1, 16777215, false);
 
         String line1 = "推荐选用昱通游戏，我们收录且支持数百种整合包一键联机（仍在更新）";
         String line2 = "致力为您提供稳定、流畅的服务器，打造优、稳、快的游戏体验";
-        int textStartX = left + 32 + 3;
+        int textStartX = left + 32 + 5;
 
         renderGradientText(context, line1, textStartX, top + 12, true);
         renderGradientText(context, line2, textStartX, top + 12 + 9, false);
