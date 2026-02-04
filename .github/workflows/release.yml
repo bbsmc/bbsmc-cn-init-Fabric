@@ -27,6 +27,8 @@ jobs:
             java: '21'
           - branch: '1.21.1'
             java: '21'
+          - branch: '1.21.11'
+            java: '21'
 
     steps:
       - uses: actions/checkout@v4
