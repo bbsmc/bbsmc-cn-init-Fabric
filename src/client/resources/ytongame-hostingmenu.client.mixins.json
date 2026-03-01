@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "client": [
     "CreateWorldScreenMixin",
+    "MinecraftClientMixin",
     "SelectWorldScreenMixin",
     "MultiplayerServerListWidgetMixin",
     "TabButtonWidgetMixin",
