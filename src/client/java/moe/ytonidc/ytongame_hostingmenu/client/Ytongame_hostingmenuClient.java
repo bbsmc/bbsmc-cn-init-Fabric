@@ -1,10 +1,10 @@
 package moe.ytonidc.ytongame_hostingmenu.client;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourcePackManager;
@@ -16,7 +16,9 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,51 +28,85 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
     public static final Identifier HOSTING_LOGO = Identifier.of(MODID, "textures/gui/logo_ytongame.png");
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static final Gson GSON = new Gson();
+    public static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
 
-    private static boolean languageSetupDone = false;
+    private static boolean setupDone = false;
 
     @Override
     public void onInitializeClient() {
         Config.load();
         HostingPackage.loadAsync();
 
-        ClientLifecycleEvents.CLIENT_STARTED.register(this::onClientStarted);
         ClientTickEvents.END_CLIENT_TICK.register(this::onClientTick);
     }
 
-    // 客户端tick事件 - 在游戏完全加载后设置语言
-    private void onClientTick(MinecraftClient mc) {
-        if (languageSetupDone) {
-            return;
+    public static void writeJsonToFile(File file, JsonObject json) throws Exception {
+        try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8)) {
+            GSON_PRETTY.toJson(json, writer);
         }
+    }
 
-        // 等待游戏完全加载（主菜单出现）
-        if (mc.currentScreen == null && mc.world == null) {
-            return;
-        }
-
-        languageSetupDone = true;
-
-        File configFile = new File(mc.runDirectory, "config/modpack_info.json");
-        if (!configFile.exists()) {
-            return;
-        }
-
-        // 检查并设置语言为简体中文
+    public static void setupLanguageAndPacks(MinecraftClient mc, List<String> languagePacks) {
         String currentLang = mc.getLanguageManager().getLanguage();
         String targetLang = "zh_cn";
+        boolean languageChanged = false;
         if (!targetLang.equals(currentLang)) {
             LOGGER.info("Current language is '{}', switching to zh_cn", currentLang);
             mc.getLanguageManager().setLanguage(targetLang);
             mc.options.language = targetLang;
             mc.options.write();
-            LOGGER.info("Language set to '{}', reloading resources", targetLang);
+            LOGGER.info("Language set to '{}'", targetLang);
             RegionDetector.refreshLanguage(targetLang);
+            languageChanged = true;
+        }
+
+        boolean packsChanged = false;
+        if (!languagePacks.isEmpty()) {
+            File resourcePacksDir = new File(mc.runDirectory, "resourcepacks");
+            ResourcePackManager packRepository = mc.getResourcePackManager();
+            packRepository.scanPacks();
+
+            List<String> packsToEnable = new ArrayList<>();
+            for (String packName : languagePacks) {
+                File packFile = new File(resourcePacksDir, packName);
+                if (packFile.exists()) {
+                    packsToEnable.add("file/" + packName);
+                } else {
+                    LOGGER.warn("Resource pack not found: {}", packName);
+                }
+            }
+
+            Collection<String> selected = new ArrayList<>(packRepository.getEnabledIds());
+            for (String packId : packsToEnable) {
+                ResourcePackProfile pack = packRepository.getProfile(packId);
+                if (pack != null && !selected.contains(packId)) {
+                    selected.add(packId);
+                    packsChanged = true;
+                    LOGGER.info("Auto-enabled resource pack: {}", packId);
+                }
+            }
+
+            if (packsChanged) {
+                packRepository.setEnabledProfiles(selected);
+            }
+        }
+
+        if (languageChanged || packsChanged) {
             mc.reloadResources();
         }
     }
 
-    private void onClientStarted(MinecraftClient mc) {
+    private void onClientTick(MinecraftClient mc) {
+        if (setupDone) {
+            return;
+        }
+
+        if (mc.currentScreen == null && mc.world == null) {
+            return;
+        }
+
+        setupDone = true;
+
         File configFile = new File(mc.runDirectory, "config/modpack_info.json");
         if (!configFile.exists()) {
             LOGGER.debug("modpack_info.json not found, skipping auto setup");
@@ -78,19 +114,17 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
         }
 
         List<String> languagePacks = new ArrayList<>();
-        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8)) {
-            JsonObject json = GSON.fromJson(reader, JsonObject.class);
+        boolean userAgreement = false;
+        JsonObject modpackJson = null;
 
-            JsonObject resourcePackInstall = json.getAsJsonObject("resource_pack_install");
-            if (resourcePackInstall != null && resourcePackInstall.has("auto_install_enabled")) {
-                boolean autoInstallEnabled = resourcePackInstall.get("auto_install_enabled").getAsBoolean();
-                if (autoInstallEnabled) {
-                    LOGGER.debug("Auto install already enabled by other means, skipping");
-                    return;
-                }
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8)) {
+            modpackJson = GSON.fromJson(reader, JsonObject.class);
+
+            if (modpackJson.has("user_agreement")) {
+                userAgreement = modpackJson.get("user_agreement").getAsBoolean();
             }
 
-            JsonArray packsArray = json.getAsJsonArray("language_packs");
+            JsonArray packsArray = modpackJson.getAsJsonArray("language_packs");
             if (packsArray != null) {
                 for (int i = 0; i < packsArray.size(); i++) {
                     languagePacks.add(packsArray.get(i).getAsString());
@@ -101,44 +135,10 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
             return;
         }
 
-        if (languagePacks.isEmpty()) {
-            return;
+        if (userAgreement) {
+            setupLanguageAndPacks(mc, languagePacks);
+        } else {
+            mc.setScreen(new LocalizationNoticeScreen(modpackJson, languagePacks, configFile));
         }
-
-        File resourcePacksDir = new File(mc.runDirectory, "resourcepacks");
-        List<String> packsToEnable = new ArrayList<>();
-        for (String packName : languagePacks) {
-            File packFile = new File(resourcePacksDir, packName);
-            if (packFile.exists()) {
-                packsToEnable.add("file/" + packName);
-            } else {
-                LOGGER.warn("Resource pack not found: {}", packName);
-            }
-        }
-
-        if (packsToEnable.isEmpty()) {
-            return;
-        }
-
-        mc.execute(() -> {
-            ResourcePackManager packRepository = mc.getResourcePackManager();
-            packRepository.scanPacks();
-
-            Collection<String> selected = new ArrayList<>(packRepository.getEnabledIds());
-            boolean changed = false;
-            for (String packId : packsToEnable) {
-                ResourcePackProfile pack = packRepository.getProfile(packId);
-                if (pack != null && !selected.contains(packId)) {
-                    selected.add(packId);
-                    changed = true;
-                    LOGGER.info("Auto-enabled resource pack: {}", packId);
-                }
-            }
-
-            if (changed) {
-                packRepository.setEnabledProfiles(selected);
-                mc.reloadResources();
-            }
-        });
     }
 }
