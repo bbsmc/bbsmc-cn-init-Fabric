@@ -97,7 +97,7 @@ public class LocalizationNoticeScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFF);
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFFFF);
 
         int textX = 30;
         int textY = 40;
@@ -105,7 +105,7 @@ public class LocalizationNoticeScreen extends Screen {
 
         for (OrderedText line : wrappedLines) {
             if (line != OrderedText.EMPTY) {
-                context.drawTextWithShadow(this.textRenderer, line, textX, textY, 0xDDDDDD);
+                context.drawTextWithShadow(this.textRenderer, line, textX, textY, 0xFFDDDDDD);
             }
             textY += lineHeight;
         }
