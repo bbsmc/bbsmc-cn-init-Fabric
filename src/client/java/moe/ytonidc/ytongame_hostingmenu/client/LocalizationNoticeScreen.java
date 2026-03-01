@@ -3,6 +3,7 @@ package moe.ytonidc.ytongame_hostingmenu.client;
 import com.google.gson.JsonObject;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.TitleScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.OrderedText;
@@ -62,6 +63,7 @@ public class LocalizationNoticeScreen extends Screen {
                 .dimensions(startX + buttonWidth + gap, buttonY, buttonWidth, buttonHeight)
                 .build());
 
+        // 预计算自动换行
         wrappedLines.clear();
         int maxWidth = this.width - 60;
         for (String key : NOTICE_KEYS) {
@@ -83,8 +85,9 @@ public class LocalizationNoticeScreen extends Screen {
             Ytongame_hostingmenuClient.LOGGER.error("Failed to write modpack_info.json", e);
         }
 
+        Ytongame_hostingmenuClient.markAgreed();
         Ytongame_hostingmenuClient.setupLanguageAndPacks(this.client, languagePacks);
-        this.client.setScreen(null);
+        this.client.setScreen(new TitleScreen());
     }
 
     private void onDecline() {
