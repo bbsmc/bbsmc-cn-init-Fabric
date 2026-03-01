@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resource.language.LanguageDefinition;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourcePackProfile;
@@ -31,13 +32,16 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
     public static final Gson GSON = new Gson();
     public static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
 
-    private static boolean setupDone = false;
+    private static boolean configLoaded = false;
+    private static boolean userAgreement = false;
+    private static List<String> languagePacks = new ArrayList<>();
+    private static JsonObject modpackJson = null;
+    private static File configFile = null;
 
     @Override
     public void onInitializeClient() {
         Config.load();
         HostingPackage.loadAsync();
-
         ClientTickEvents.END_CLIENT_TICK.register(this::onClientTick);
     }
 
@@ -45,6 +49,15 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
         try (OutputStreamWriter writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8)) {
             GSON_PRETTY.toJson(json, writer);
         }
+    }
+
+    public static void markAgreed() { userAgreement = true; }
+
+    public static Screen interceptScreen() {
+        if (userAgreement) return null;
+        if (!configLoaded) loadConfig(MinecraftClient.getInstance());
+        if (userAgreement) return null;
+        return new LocalizationNoticeScreen(modpackJson, languagePacks, configFile);
     }
 
     public static void setupLanguageAndPacks(MinecraftClient mc, List<String> languagePacks) {
@@ -100,34 +113,22 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
         }
     }
 
-    private void onClientTick(MinecraftClient mc) {
-        if (setupDone) {
-            return;
-        }
+    private static void loadConfig(MinecraftClient mc) {
+        if (configLoaded) return;
+        configLoaded = true;
 
-        if (mc.currentScreen == null && mc.world == null) {
-            return;
-        }
-
-        setupDone = true;
-
-        File configFile = new File(mc.runDirectory, "config/modpack_info.json");
+        configFile = new File(mc.runDirectory, "config/modpack_info.json");
         if (!configFile.exists()) {
             LOGGER.debug("modpack_info.json not found, skipping auto setup");
+            userAgreement = true;
             return;
         }
-
-        List<String> languagePacks = new ArrayList<>();
-        boolean userAgreement = false;
-        JsonObject modpackJson = null;
 
         try (InputStreamReader reader = new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8)) {
             modpackJson = GSON.fromJson(reader, JsonObject.class);
-
             if (modpackJson.has("user_agreement")) {
                 userAgreement = modpackJson.get("user_agreement").getAsBoolean();
             }
-
             JsonArray packsArray = modpackJson.getAsJsonArray("language_packs");
             if (packsArray != null) {
                 for (int i = 0; i < packsArray.size(); i++) {
@@ -136,13 +137,17 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
             }
         } catch (Exception e) {
             LOGGER.error("Failed to read modpack_info.json", e);
-            return;
+            userAgreement = true;
         }
 
         if (userAgreement) {
             setupLanguageAndPacks(mc, languagePacks);
-        } else {
-            mc.openScreen(new LocalizationNoticeScreen(modpackJson, languagePacks, configFile));
         }
+    }
+
+    private void onClientTick(MinecraftClient mc) {
+        if (configLoaded) return;
+        if (mc.currentScreen == null && mc.world == null) return;
+        loadConfig(mc);
     }
 }
