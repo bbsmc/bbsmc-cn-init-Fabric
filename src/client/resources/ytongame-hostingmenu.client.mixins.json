@@ -4,6 +4,7 @@
   "package": "moe.ytonidc.ytongame_hostingmenu.mixin.client",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "MinecraftClientMixin",
     "CreateWorldScreenMixin",
     "SelectWorldScreenMixin",
     "MultiplayerServerListWidgetMixin",
