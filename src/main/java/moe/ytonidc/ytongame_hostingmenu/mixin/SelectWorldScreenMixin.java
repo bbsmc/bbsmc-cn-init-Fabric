@@ -36,7 +36,7 @@ public abstract class SelectWorldScreenMixin extends Screen {
             int buttonHeight = searchBox.getHeight();
 
             ButtonWidget hostingButton = new ButtonWidget(buttonX, buttonY, buttonWidth, buttonHeight,
-                new LiteralText("联机开服"),
+                new LiteralText("联机开服(广告)"),
                 button -> this.client.openScreen(new HostingScreen(this)));
 
             this.addButton(hostingButton);
