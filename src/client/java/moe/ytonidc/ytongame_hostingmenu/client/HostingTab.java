@@ -11,7 +11,7 @@ import net.minecraft.text.Text;
 import java.util.function.Consumer;
 
 public class HostingTab implements Tab {
-    private static final Text TITLE = Text.literal("联机开服");
+    private static final Text TITLE = Text.literal("联机开服(广告)");
 
     public static boolean shouldOpenHostingTab = false;
 
