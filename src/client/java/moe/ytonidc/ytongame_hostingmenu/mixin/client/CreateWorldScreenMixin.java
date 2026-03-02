@@ -35,7 +35,7 @@ public abstract class CreateWorldScreenMixin extends Screen {
         int buttonY = 8;
 
         ytongame$hostingButton = new ButtonWidget(buttonX, buttonY, buttonWidth, buttonHeight,
-            new LiteralText("联机开服"),
+            new LiteralText("联机开服(广告)"),
             button -> this.client.setScreen(new HostingScreen(this)));
 
         this.addDrawableChild(ytongame$hostingButton);
