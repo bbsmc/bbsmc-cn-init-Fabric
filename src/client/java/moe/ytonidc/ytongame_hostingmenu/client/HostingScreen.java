@@ -10,7 +10,7 @@ import net.minecraft.util.Util;
 import java.net.URI;
 
 public class HostingScreen extends Screen {
-    private static final Text TITLE = Text.literal("联机开服");
+    private static final Text TITLE = Text.literal("联机开服(广告)");
     private static final Text SUBSCRIBE_TEXT = Text.literal("订阅服务器");
 
     private final Screen lastScreen;
