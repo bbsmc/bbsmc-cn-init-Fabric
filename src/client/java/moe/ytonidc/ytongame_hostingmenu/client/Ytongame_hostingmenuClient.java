@@ -136,14 +136,14 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
             userAgreement = true;
         }
 
-        if (userAgreement) {
-            setupLanguageAndPacks(mc, languagePacks);
-        }
     }
 
     private void onClientTick(MinecraftClient mc) {
         if (configLoaded) return;
         if (mc.currentScreen == null && mc.world == null) return;
         loadConfig(mc);
+        if (userAgreement) {
+            setupLanguageAndPacks(mc, languagePacks);
+        }
     }
 }
