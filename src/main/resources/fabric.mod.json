@@ -1,30 +1,29 @@
 {
   "schemaVersion": 1,
-  "id": "ytongame-hostingmenu",
+  "id": "bbsmc-cn-init",
   "version": "${version}",
   "name": "YTGame-HostingMenu",
   "description": "",
   "authors": [],
   "contact": {},
   "license": "All-Rights-Reserved",
-  "icon": "assets/ytongame-hostingmenu/icon.png",
   "environment": "client",
-  "accessWidener": "ytongame-hostingmenu.accesswidener",
+  "accessWidener": "bbsmc-cn-init.accesswidener",
   "entrypoints": {
     "fabric-datagen": [
-      "moe.ytonidc.ytongame_hostingmenu.client.Ytongame_hostingmenuDataGenerator"
+      "net.bbsmc.cninit.client.BbsmcCnInitDataGenerator"
     ],
     "client": [
-      "moe.ytonidc.ytongame_hostingmenu.client.Ytongame_hostingmenuClient"
+      "net.bbsmc.cninit.client.BbsmcCnInitClient"
     ],
     "main": [
-      "moe.ytonidc.ytongame_hostingmenu.Ytongame_hostingmenu"
+      "net.bbsmc.cninit.BbsmcCnInit"
     ]
   },
   "mixins": [
-    "ytongame-hostingmenu.mixins.json",
+    "bbsmc-cn-init.mixins.json",
     {
-      "config": "ytongame-hostingmenu.client.mixins.json",
+      "config": "bbsmc-cn-init.client.mixins.json",
       "environment": "client"
     }
   ],
