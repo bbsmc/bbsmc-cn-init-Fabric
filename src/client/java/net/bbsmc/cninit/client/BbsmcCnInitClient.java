@@ -157,8 +157,6 @@ public class BbsmcCnInitClient implements ClientModInitializer {
         }
 
         loadConfig(mc);
-        if (userAgreement) {
-            setupLanguageAndPacks(mc, languagePacks);
-        }
+        setupLanguageAndPacks(mc, languagePacks);
     }
 }
