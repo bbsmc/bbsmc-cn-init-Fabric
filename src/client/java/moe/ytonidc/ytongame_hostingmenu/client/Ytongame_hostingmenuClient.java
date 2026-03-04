@@ -10,7 +10,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.resource.ResourcePackManager;
 import net.minecraft.resource.ResourcePackProfile;
-import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +25,6 @@ import java.util.List;
 
 public class Ytongame_hostingmenuClient implements ClientModInitializer {
     public static final String MODID = "ytongame-hostingmenu";
-    public static final Identifier HOSTING_LOGO = new Identifier(MODID, "textures/gui/logo_ytongame.png");
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
     public static final Gson GSON = new Gson();
     public static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();
@@ -40,7 +38,6 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Config.load();
-        HostingPackage.loadAsync();
         ClientTickEvents.END_CLIENT_TICK.register(this::onClientTick);
     }
 
@@ -69,7 +66,6 @@ public class Ytongame_hostingmenuClient implements ClientModInitializer {
             mc.options.language = targetLang;
             mc.options.write();
             LOGGER.info("Language set to '{}'", targetLang);
-            RegionDetector.refreshLanguage(targetLang);
             languageChanged = true;
         }
 

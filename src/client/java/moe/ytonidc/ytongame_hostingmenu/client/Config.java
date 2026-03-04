@@ -15,9 +15,6 @@ public class Config {
     private static ConfigData data = new ConfigData();
 
     public static class ConfigData {
-        public String purchaseUrl = "https://bbsmc.net/server?aff=LaotouY";
-        public boolean enableAds = true;
-        public boolean chineseOnly = true;
     }
 
     public static void load() {
@@ -39,17 +36,5 @@ public class Config {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static String getPurchaseUrl() {
-        return data.purchaseUrl;
-    }
-
-    public static boolean isAdsEnabled() {
-        return data.enableAds;
-    }
-
-    public static boolean isChineseOnly() {
-        return data.chineseOnly;
     }
 }
