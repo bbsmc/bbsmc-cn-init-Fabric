@@ -26,8 +26,7 @@ public class LocalizationNoticeScreen extends Screen {
         "\u00a7f  反馈QQ群：\u00a7b\u00a7l1073724937\u00a7r\u00a7f  |  官方网站：\u00a7n\u00a7bhttps://bbsmc.net\u00a7r\u00a7f",
         ""
     };
-    private static final String AGREE_TEXT = "同意并继续";
-    private static final String DECLINE_TEXT = "拒绝并退出";
+    private static final String AGREE_TEXT = "继续";
 
     private final JsonObject modpackJson;
     private final List<String> languagePacks;
@@ -48,8 +47,7 @@ public class LocalizationNoticeScreen extends Screen {
 
         int buttonWidth = 120;
         int buttonHeight = 20;
-        int gap = 10;
-        int totalWidth = buttonWidth * 2 + gap;
+        int totalWidth = buttonWidth;
         int startX = (this.width - totalWidth) / 2;
         int buttonY = this.height - 40;
 
@@ -57,11 +55,6 @@ public class LocalizationNoticeScreen extends Screen {
                 Text.literal(AGREE_TEXT),
                 btn -> onAgree())
                 .dimensions(startX, buttonY, buttonWidth, buttonHeight)
-                .build());
-        this.addDrawableChild(ButtonWidget.builder(
-                Text.literal(DECLINE_TEXT),
-                btn -> onDecline())
-                .dimensions(startX + buttonWidth + gap, buttonY, buttonWidth, buttonHeight)
                 .build());
 
         // 预计算自动换行
@@ -90,11 +83,6 @@ public class LocalizationNoticeScreen extends Screen {
         this.client.setScreen(new TitleScreen());
     }
 
-    private void onDecline() {
-        BbsmcCnInitClient.LOGGER.info("User declined localization notice, shutting down");
-        this.client.scheduleStop();
-    }
-
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFFFF);
@@ -111,14 +99,6 @@ public class LocalizationNoticeScreen extends Screen {
         }
 
         super.render(context, mouseX, mouseY, delta);
-    }
-
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == 256) { // ESC
-            onDecline();
-            return true;
-        }
-        return false;
     }
 
 }
