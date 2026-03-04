@@ -1,4 +1,4 @@
-package moe.ytonidc.ytongame_hostingmenu.client;
+package net.bbsmc.cninit.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,7 +10,7 @@ import java.nio.file.Path;
 
 public class Config {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("ytongame-hostingmenu.json");
+    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("bbsmc-cn-init.json");
 
     private static ConfigData data = new ConfigData();
 

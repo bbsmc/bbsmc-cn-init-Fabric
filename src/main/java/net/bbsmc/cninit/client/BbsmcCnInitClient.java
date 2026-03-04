@@ -1,4 +1,4 @@
-package moe.ytonidc.ytongame_hostingmenu.client;
+package net.bbsmc.cninit.client;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Ytongame_hostingmenuClient implements ClientModInitializer {
-    public static final String MODID = "ytongame-hostingmenu";
+public class BbsmcCnInitClient implements ClientModInitializer {
+    public static final String MODID = "bbsmc-cn-init";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static final Gson GSON = new Gson();
     public static final Gson GSON_PRETTY = new GsonBuilder().setPrettyPrinting().create();

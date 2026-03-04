@@ -1,6 +1,6 @@
-package moe.ytonidc.ytongame_hostingmenu.mixin;
+package net.bbsmc.cninit.mixin;
 
-import moe.ytonidc.ytongame_hostingmenu.client.Ytongame_hostingmenuClient;
+import net.bbsmc.cninit.client.BbsmcCnInitClient;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen;
@@ -15,7 +15,7 @@ public class MinecraftClientMixin {
     @ModifyVariable(method = "openScreen", at = @At("HEAD"), argsOnly = true)
     private Screen onOpenScreen(Screen screen) {
         if (screen instanceof SelectWorldScreen || screen instanceof MultiplayerScreen) {
-            Screen redirect = Ytongame_hostingmenuClient.interceptScreen();
+            Screen redirect = BbsmcCnInitClient.interceptScreen();
             if (redirect != null) {
                 return redirect;
             }
