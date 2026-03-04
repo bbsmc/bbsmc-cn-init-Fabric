@@ -1,12 +1,14 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "moe.ytonidc.ytongame_hostingmenu.mixin.client",
+  "package": "net.bbsmc.cninit.mixin",
   "compatibilityLevel": "JAVA_17",
-  "client": [
-    "MinecraftClientMixin"
+  "mixins": [
   ],
   "injectors": {
     "defaultRequire": 1
+  },
+  "overwrites": {
+    "requireAnnotations": true
   }
 }
