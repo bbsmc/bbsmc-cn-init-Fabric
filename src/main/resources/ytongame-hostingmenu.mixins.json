@@ -6,10 +6,7 @@
   "mixins": [
   ],
   "client": [
-    "MinecraftClientMixin",
-    "CreateWorldScreenMixin",
-    "SelectWorldScreenMixin",
-    "MultiplayerServerListWidgetMixin"
+    "MinecraftClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1
