@@ -142,6 +142,5 @@ public class BbsmcCnInitClient implements ClientModInitializer {
         if (configLoaded) return;
         if (mc.currentScreen == null && mc.world == null) return;
         loadConfig(mc);
-        setupLanguageAndPacks(mc, languagePacks);
     }
 }
