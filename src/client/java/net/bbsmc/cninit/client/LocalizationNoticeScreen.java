@@ -77,6 +77,7 @@ public class LocalizationNoticeScreen extends Screen {
         }
 
         BbsmcCnInitClient.markAgreed();
+        BbsmcCnInitClient.setupLanguageAndPacks(this.client, languagePacks);
         this.client.setScreen(new TitleScreen());
     }
 
