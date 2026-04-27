@@ -78,25 +78,46 @@ public class BbsmcCnInitClient implements ClientModInitializer {
             List<String> packsToEnable = new ArrayList<>();
             for (String packName : packs) {
                 File packFile = new File(resourcePacksDir, packName);
-                if (packFile.exists()) {
-                    packsToEnable.add("file/" + packName);
+                String packId = "file/" + packName;
+                if (packFile.exists() && packRepository.getProfile(packId) != null) {
+                    packsToEnable.add(packId);
                 } else {
                     LOGGER.warn("Resource pack not found: {}", packName);
                 }
             }
 
-            Collection<String> selected = new ArrayList<>(packRepository.getEnabledNames());
-            for (String packId : packsToEnable) {
-                ResourcePackProfile pack = packRepository.getProfile(packId);
-                if (pack != null && !selected.contains(packId)) {
-                    selected.add(packId);
-                    packsChanged = true;
-                    LOGGER.info("Auto-enabled resource pack: {}", packId);
+            if (!packsToEnable.isEmpty()) {
+                // 用 getEnabledProfiles() 拿到有序 Collection（getEnabledNames 返回 ImmutableSet 无序）
+                List<String> selected = new ArrayList<>();
+                for (ResourcePackProfile p : packRepository.getEnabledProfiles()) {
+                    selected.add(p.getName());
                 }
-            }
 
-            if (packsChanged) {
-                packRepository.setEnabledProfiles(selected);
+                // 末尾 = 最高优先级（FallbackResourceManager 从末尾向前查找资源）
+                // 快速判断：packsToEnable 是否已按相同顺序排在 selected 末尾，是就直接跳过
+                int n = packsToEnable.size();
+                int s = selected.size();
+                boolean alreadyAtTop = s >= n;
+                if (alreadyAtTop) {
+                    for (int i = 0; i < n; i++) {
+                        if (!packsToEnable.get(i).equals(selected.get(s - n + i))) {
+                            alreadyAtTop = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!alreadyAtTop) {
+                    for (String packId : packsToEnable) {
+                        selected.remove(packId);
+                    }
+                    selected.addAll(packsToEnable);
+                    packRepository.setEnabledProfiles(selected);
+                    packsChanged = true;
+                    LOGGER.info("Promoted resource packs to highest priority: {}", packsToEnable);
+                } else {
+                    LOGGER.debug("Resource packs already at highest priority, skipping reload");
+                }
             }
         }
 
