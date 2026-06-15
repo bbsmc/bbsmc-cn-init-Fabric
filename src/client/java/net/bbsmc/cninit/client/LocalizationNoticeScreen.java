@@ -1,12 +1,12 @@
 package net.bbsmc.cninit.client;
 
 import com.google.gson.JsonObject;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.TitleScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.OrderedText;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,10 +32,10 @@ public class LocalizationNoticeScreen extends Screen {
     private final List<String> languagePacks;
     private final File configFile;
 
-    private final List<OrderedText> wrappedLines = new ArrayList<>();
+    private final List<FormattedCharSequence> wrappedLines = new ArrayList<>();
 
     public LocalizationNoticeScreen(JsonObject modpackJson, List<String> languagePacks, File configFile) {
-        super(Text.literal(TITLE_TEXT));
+        super(Component.literal(TITLE_TEXT));
         this.modpackJson = modpackJson;
         this.languagePacks = languagePacks;
         this.configFile = configFile;
@@ -51,10 +51,10 @@ public class LocalizationNoticeScreen extends Screen {
         int startX = (this.width - totalWidth) / 2;
         int buttonY = this.height - 40;
 
-        this.addDrawableChild(ButtonWidget.builder(
-                Text.literal(AGREE_TEXT),
+        this.addRenderableWidget(Button.builder(
+                Component.literal(AGREE_TEXT),
                 btn -> onAgree())
-                .dimensions(startX, buttonY, buttonWidth, buttonHeight)
+                .bounds(startX, buttonY, buttonWidth, buttonHeight)
                 .build());
 
         // 预计算自动换行
@@ -62,9 +62,9 @@ public class LocalizationNoticeScreen extends Screen {
         int maxWidth = this.width - 60;
         for (String line : NOTICE_LINES) {
             if (line.isEmpty()) {
-                wrappedLines.add(OrderedText.EMPTY);
+                wrappedLines.add(FormattedCharSequence.EMPTY);
             } else {
-                wrappedLines.addAll(this.textRenderer.wrapLines(Text.literal(line), maxWidth));
+                wrappedLines.addAll(this.font.split(Component.literal(line), maxWidth));
             }
         }
     }
@@ -79,26 +79,26 @@ public class LocalizationNoticeScreen extends Screen {
         }
 
         BbsmcCnInitClient.markAgreed();
-        BbsmcCnInitClient.setupLanguageAndPacks(this.client, languagePacks);
-        this.client.setScreen(new TitleScreen());
+        BbsmcCnInitClient.setupLanguageAndPacks(this.minecraft, languagePacks);
+        this.minecraft.setScreen(new TitleScreen());
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 15, 0xFFFFFFFF);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTicks);
+
+        guiGraphics.centeredText(this.font, this.title, this.width / 2, 15, 0xFFFFFFFF);
 
         int textX = 30;
         int textY = 40;
         int lineHeight = 11;
 
-        for (OrderedText line : wrappedLines) {
-            if (line != OrderedText.EMPTY) {
-                context.drawTextWithShadow(this.textRenderer, line, textX, textY, 0xFFDDDDDD);
+        for (FormattedCharSequence line : wrappedLines) {
+            if (line != FormattedCharSequence.EMPTY) {
+                guiGraphics.text(this.font, line, textX, textY, 0xFFDDDDDD);
             }
             textY += lineHeight;
         }
-
-        super.render(context, mouseX, mouseY, delta);
     }
 
 }

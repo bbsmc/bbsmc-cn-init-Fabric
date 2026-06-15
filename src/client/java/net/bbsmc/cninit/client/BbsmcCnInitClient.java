@@ -6,10 +6,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.resource.ResourcePackProfile;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +20,6 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class BbsmcCnInitClient implements ClientModInitializer {
@@ -57,7 +56,7 @@ public class BbsmcCnInitClient implements ClientModInitializer {
             return null;
         }
         if (!configLoaded) {
-            loadConfig(MinecraftClient.getInstance());
+            loadConfig(Minecraft.getInstance());
         }
         if (userAgreement) {
             return null;
@@ -65,30 +64,30 @@ public class BbsmcCnInitClient implements ClientModInitializer {
         return new LocalizationNoticeScreen(modpackJson, languagePacks, configFile);
     }
 
-    public static void setupLanguageAndPacks(MinecraftClient mc, List<String> packs) {
-        String currentLang = mc.getLanguageManager().getLanguage();
+    public static void setupLanguageAndPacks(Minecraft mc, List<String> packs) {
+        String currentLang = mc.getLanguageManager().getSelected();
         String targetLang = "zh_cn";
         boolean languageChanged = false;
         if (!targetLang.equals(currentLang)) {
             LOGGER.info("Current language is '{}', switching to zh_cn", currentLang);
-            mc.getLanguageManager().setLanguage(targetLang);
-            mc.options.language = targetLang;
-            mc.options.write();
+            mc.getLanguageManager().setSelected(targetLang);
+            mc.options.languageCode = targetLang;
+            mc.options.save();
             LOGGER.info("Language set to '{}'", targetLang);
             languageChanged = true;
         }
 
         boolean packsChanged = false;
         if (!packs.isEmpty()) {
-            File resourcePacksDir = new File(mc.runDirectory, "resourcepacks");
-            ResourcePackManager packRepository = mc.getResourcePackManager();
-            packRepository.scanPacks();
+            File resourcePacksDir = new File(mc.gameDirectory, "resourcepacks");
+            PackRepository packRepository = mc.getResourcePackRepository();
+            packRepository.reload();
 
             List<String> packsToEnable = new ArrayList<>();
             for (String packName : packs) {
                 File packFile = new File(resourcePacksDir, packName);
                 String packId = "file/" + packName;
-                if (packFile.exists() && packRepository.getProfile(packId) != null) {
+                if (packFile.exists() && packRepository.getPack(packId) != null) {
                     packsToEnable.add(packId);
                 } else {
                     LOGGER.warn("Resource pack not found: {}", packName);
@@ -96,9 +95,9 @@ public class BbsmcCnInitClient implements ClientModInitializer {
             }
 
             if (!packsToEnable.isEmpty()) {
-                // 用 getEnabledProfiles() 拿到有序 Collection（getEnabledIds 返回 ImmutableSet 无序）
+                // 用 getSelectedPacks() 拿到有序 Collection（getSelectedIds 返回 ImmutableSet 无序）
                 List<String> selected = new ArrayList<>();
-                for (ResourcePackProfile p : packRepository.getEnabledProfiles()) {
+                for (Pack p : packRepository.getSelectedPacks()) {
                     selected.add(p.getId());
                 }
 
@@ -121,7 +120,7 @@ public class BbsmcCnInitClient implements ClientModInitializer {
                         selected.remove(packId);
                     }
                     selected.addAll(packsToEnable);
-                    packRepository.setEnabledProfiles(selected);
+                    packRepository.setSelected(selected);
                     packsChanged = true;
                     LOGGER.info("Promoted resource packs to highest priority: {}", packsToEnable);
                 } else {
@@ -131,17 +130,17 @@ public class BbsmcCnInitClient implements ClientModInitializer {
         }
 
         if (languageChanged || packsChanged) {
-            mc.reloadResources();
+            mc.reloadResourcePacks();
         }
     }
 
-    private static void loadConfig(MinecraftClient mc) {
+    private static void loadConfig(Minecraft mc) {
         if (configLoaded) {
             return;
         }
         configLoaded = true;
 
-        configFile = new File(mc.runDirectory, "config/modpack_info.json");
+        configFile = new File(mc.gameDirectory, "config/modpack_info.json");
         if (!configFile.exists()) {
             LOGGER.debug("modpack_info.json not found, skipping auto setup");
             userAgreement = true;
@@ -168,12 +167,12 @@ public class BbsmcCnInitClient implements ClientModInitializer {
 
     }
 
-    private void onClientTick(MinecraftClient mc) {
+    private void onClientTick(Minecraft mc) {
         if (configLoaded) {
             return;
         }
 
-        if (mc.currentScreen == null && mc.world == null) {
+        if (mc.screen == null && mc.level == null) {
             return;
         }
 
